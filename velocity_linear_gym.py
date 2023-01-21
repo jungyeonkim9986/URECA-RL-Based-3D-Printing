@@ -75,11 +75,17 @@ class EnvRLAM(gym.Env):
             idx = self.current_step - 1
             if idx < 0:
                 idx = 0
-            if self.timesteps % 4 == 0:
-                self.dir = 'right'
-                angle = 0
-                if self.distance >= 1250e-6*0.8 - 125e-6:
-                    break
+            
+            self.dir = 'right'
+            angle = 0
+            if self.distance >= 1250e-6*0.8 - 125e-6:
+                done = True
+                return self.buffer, self.reward, done, {}
+            self.distance += V*self.dt
+            self.ETenv.step(power, time, angle, self.dir)
+            self.buffer = np.roll(self.buffer, -1, axis=0)
+            self.buffer[-1] = self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0]
+
             #         self.dir = 'up'
             #         self.distance = 0
             #         angle = np.pi/2
