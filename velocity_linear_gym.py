@@ -75,42 +75,11 @@ class EnvRLAM(gym.Env):
             idx = self.current_step - 1
             if idx < 0:
                 idx = 0
-            
-            self.dir = 'right'
-            angle = 0
-            if self.distance >= 1250e-6*0.8 - 125e-6:
-                done = True
-                return self.buffer, self.reward, done, {}
-            self.distance += V*self.dt
-            self.ETenv.step(power, time, angle, self.dir)
-            self.buffer = np.roll(self.buffer, -1, axis=0)
-            self.buffer[-1] = self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0]
 
-            #         self.dir = 'up'
-            #         self.distance = 0
-            #         angle = np.pi/2
-            #         self.timesteps += 1
-
-            # elif self.timesteps % 4 == 1 or self.timesteps % 4 == 3:
-            #     angle = np.pi/2
-            #     self.dir = 'up'
-            #     if self.distance >= 120e-6*0.8:
-            #         self.timesteps += 1
-            #         self.distance = 0
-            #         self.dir = 0
-            #         if self.timesteps % 4 == 2:
-            #             angle = np.pi
-            #         if self.timesteps % 4 == 0:
-            #             angle = 0
-
-            # elif self.timesteps % 4 == 2:
-            #     self.dir = 'left'
-            #     angle = np.pi
-            #     if self.distance >= 1250e-6*0.8 - 125e-6:
-            #         self.dir = 'up'
-            #         self.distance = 0
-            #         angle = np.pi/2
-            #         self.timesteps += 1
+            while (self.distance < 1250e-6*0.8 - 125e-6):
+              self.dir = 'right'
+              angle = 0
+              self.timesteps += 1
 
             self.ETenv.forward(time, angle, V=V, P=power)
 
@@ -215,7 +184,7 @@ class EnvRLAM(gym.Env):
                                 :, None, None])/(np.std(self.buffer[0:3], axis=(1, 2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps > 19:
+            if self.timesteps == 1:
                 minmax_reward = (
                     np.max(self.depths[20:]) - np.min(self.depths[20:]))/25e-6
                 gradient_reward = np.mean(
@@ -232,7 +201,7 @@ class EnvRLAM(gym.Env):
                 if self.verbose == 0:
                     if self.total_steps % 10 == 0:
                         print(str(self.total_steps*8) +
-                              " episodes run, current reward = " + str(reward))
+                              " episodes run, current ureward = " + str(reward))
                 done = True
                 self.total_steps += 1
             else:
