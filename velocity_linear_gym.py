@@ -184,7 +184,7 @@ class EnvRLAM(gym.Env):
                                 :, None, None])/(np.std(self.buffer[0:3], axis=(1, 2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps == 10:
+            if self.timesteps == 7:
                 minmax_reward = (
                     np.max(self.depths[20:]) - np.min(self.depths[20:]))/25e-6
                 gradient_reward = np.mean(
