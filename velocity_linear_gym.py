@@ -76,10 +76,10 @@ class EnvRLAM(gym.Env):
             if idx < 0:
                 idx = 0
 
-            while (self.distance < 1250e-6*0.8 - 125e-6):
-              self.dir = 'right'
-              angle = 0
-              self.timesteps += 1
+            if self.distance < 1250e-6*0.8 - 125e-6:
+                self.dir = 'right'
+                angle = 0
+                self.timesteps += 1
 
             self.ETenv.forward(time, angle, V=V, P=power)
 
@@ -184,7 +184,7 @@ class EnvRLAM(gym.Env):
                                 :, None, None])/(np.std(self.buffer[0:3], axis=(1, 2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps == 1:
+            if self.timesteps == 10:
                 minmax_reward = (
                     np.max(self.depths[20:]) - np.min(self.depths[20:]))/25e-6
                 gradient_reward = np.mean(
@@ -201,7 +201,7 @@ class EnvRLAM(gym.Env):
                 if self.verbose == 0:
                     if self.total_steps % 10 == 0:
                         print(str(self.total_steps*8) +
-                              " episodes run, current ureward = " + str(reward))
+                              " episodes run, current reward = " + str(reward))
                 done = True
                 self.total_steps += 1
             else:
