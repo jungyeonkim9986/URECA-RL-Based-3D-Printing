@@ -369,7 +369,7 @@ def main():
 
     callback = SaveOnBestTrainingRewardCallback(
         check_freq=1000, log_dir=log_dir)
-    timesteps = 4000000
+    timesteps = 1000000
     model.learn(total_timesteps=timesteps,
                 tb_log_name="ppo_linear_" + parameter, callback=callback)
 
