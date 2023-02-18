@@ -75,11 +75,13 @@ class EnvRLAM(gym.Env):
             idx = self.current_step - 1
             if idx < 0:
                 idx = 0
+                
+            angle = 0
+            self.dir = 'right'
 
-            if self.distance < 1250e-6*0.8 - 125e-6:
-                self.dir = 'right'
-                angle = 0
+            if self.distance > 1250e-6*0.8 - 125e-6:
                 self.timesteps += 1
+
 
             self.ETenv.forward(time, angle, V=V, P=power)
 
@@ -184,12 +186,12 @@ class EnvRLAM(gym.Env):
                                 :, None, None])/(np.std(self.buffer[0:3], axis=(1, 2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps == 7:
+            if self.timesteps == 1:
                 minmax_reward = (
-                    np.max(self.depths[20:]) - np.min(self.depths[20:]))/25e-6
+                    np.max(self.depths[1:]) - np.min(self.depths[1:]))/25e-6
                 gradient_reward = np.mean(
-                    np.abs(np.diff(self.depths[20:])/25e-6))
-                reward = self.reward/20 - 0.5*minmax_reward
+                    np.abs(np.diff(self.depths[1:])/25e-6))
+                reward = self.reward - 0.5*minmax_reward
                 if self.verbose == 2:
                     print(reward, "reward", "velocity", V, "power", power,
                           "timestep", self.total_steps, "amplitude", minmax_reward)

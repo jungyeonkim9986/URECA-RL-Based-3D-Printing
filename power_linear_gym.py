@@ -12,7 +12,7 @@ from pylab import gca
 
 
 # Specify local figure directory to store plots, diagnostic info
-fig_dir = 'results/square_power_control_figures'
+fig_dir = 'results/linear_power_control_figures'
 if not os.path.exists(fig_dir):
     os.makedirs(fig_dir, exist_ok = True)
 def frame_tick(frame_width = 2, tick_width = 1.5):
@@ -30,12 +30,12 @@ class EnvRLAM(gym.Env):
     # They must be gym.spaces objects    
         self.plot = plot
         # self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=np.float64)
+        self.action_space = spaces.Box(low=np.array([0]), high=np.array([self.squaresize-self.current_step]), dtype=np.float64)
         self.squaresize = 10
         self.spacing = 20e-6
         self.observation_space = spaces.Box(low=300, high=20000, shape=(9, self.squaresize, self.squaresize,), dtype=np.float64)
         self.ETenv = ET(20e-6, V = 0.8, bc = 'flux', spacing = self.spacing)
         self.current_step = 0
-        self.action_space = spaces.Box(low=np.array([0]), high=np.array([self.squaresize-self.current_step]), dtype=np.float64)
         self.depths = []
         self.times =[]
         self.indtimes = []
@@ -75,46 +75,19 @@ class EnvRLAM(gym.Env):
             self.current_step += 1
 
             V =  125e-6*0.8/time
-        #
+        
             self.velocity.append(V)
             self.power.append(power)
             
             idx = self.current_step -1
             if idx < 0:
                 idx = 0                    
-            if self.timesteps % 4 == 0:
-                self.dir = 'right'
-                angle = 0
-
-                if self.current_step == self.squaresize:  # reached frame boundary
-                    done = True
-                elif action[0] < 0:  # action is moving left
-                    done = True
-                    self.reward = -1  # penalize moving left
-                else:
-                    self.current_step += 1
-                    self.reward = 1  # reward moving right
-
-            # elif self.timesteps % 4 == 1 or self.timesteps % 4 == 3:
-            #     angle = np.pi/2
-            #     self.dir = 'up'
-            #     if self.distance >= 120e-6*0.8:
-            #         self.timesteps += 1
-            #         self.distance = 0
-            #         self.dir = 0
-            #         if self.timesteps % 4 == 2:
-            #             angle = np.pi
-            #         if self.timesteps % 4 == 0:
-            #             angle = 0
             
-            # elif self.timesteps % 4 == 2:
-            #     self.dir = 'left'
-            #     angle = np.pi
-            #     if self.distance  >= 1250e-6*0.8 - 125e-6:
-            #         self.dir = 'up'
-            #         self.distance = 0
-            #         angle = np.pi/2
-            #         self.timesteps += 1
+            angle = 0
+            self.dir = 'right'
+
+            if self.distance > 1250e-6*0.8 - 125e-6:
+                self.timesteps += 1
             
             self.ETenv.forward(time, angle, V = V, P = power)
            
@@ -135,13 +108,13 @@ class EnvRLAM(gym.Env):
             
             if self.plot:
                     
-                np.savetxt(fig_dir + "/" + "powercontrolsquaretimesnorm",np.array(self.times)*1e3)
-                np.savetxt(fig_dir + "/" + "powercontrolsquaredepthsframeskip" + str(self.frameskip), np.array(self.depths))
+                np.savetxt(fig_dir + "/" + "powercontrollineartimesnorm",np.array(self.times)*1e3)
+                np.savetxt(fig_dir + "/" + "powercontrollineardepthsframeskip" + str(self.frameskip), np.array(self.depths))
 
-                np.savetxt(fig_dir + "/" + "powercontrolsquarevelocityframeskip" + str(self.frameskip), np.array(self.velocity))
+                np.savetxt(fig_dir + "/" + "powercontrollinearvelocityframeskip" + str(self.frameskip), np.array(self.velocity))
                 testfigs  = self.ETenv.plot()
                 highxlim = np.max(self.times)
-                testfigs[0].savefig(fig_dir + "/" + str(self.frameskip) + 'powercontrolsquare_test' +  '%04d' % self.current_step + ".png")
+                testfigs[0].savefig(fig_dir + "/" + str(self.frameskip) + 'powercontrollinear_test' +  '%04d' % self.current_step + ".png")
                 plt.clf()
                 font_size = 14
                 plt.plot(np.array(self.times)*1e3, np.array(self.depths)*1e6, linewidth = 2.0)
@@ -155,7 +128,7 @@ class EnvRLAM(gym.Env):
 
                 plt.plot(np.arange(0, np.max(np.array(self.times))*1e3, 0.01), -55*np.ones(len(np.arange(0, np.max(np.array(self.times))*1e3, 0.01))), 'k--')
                 
-                plt.savefig(fig_dir + "/" + str(self.frameskip) + 'powercontrolsquaretestdepth'+  '%04d' % self.current_step + ".png")
+                plt.savefig(fig_dir + "/" + str(self.frameskip) + 'powercontrollineartestdepth'+  '%04d' % self.current_step + ".png")
                 plt.clf()            
 
                 plt.plot(np.array(self.times)*1e3, self.velocity)
@@ -165,7 +138,7 @@ class EnvRLAM(gym.Env):
                 plt.xlim(0, highxlim*1e3)
                 plt.ylim(0, 3.0)
                 plt.title(str(round(self.ETenv.time*1e6)) + r'[$\mu$s] ')
-                plt.savefig(fig_dir + "/" +str(self.frameskip) + 'powercontrolsquaretestvelocity'+  '%04d' % self.current_step + ".png")
+                plt.savefig(fig_dir + "/" +str(self.frameskip) + 'powercontrollineartestvelocity'+  '%04d' % self.current_step + ".png")
                 plt.clf()
                 
 
@@ -176,7 +149,7 @@ class EnvRLAM(gym.Env):
                 plt.xlim(0, highxlim*1e3)
                 plt.ylim(-10, 600)
                 plt.title(str(round(self.ETenv.time*1e6)) + r'[$\mu$s] ')
-                plt.savefig(fig_dir + "/" +str(self.frameskip) + 'powercontrolsquaretestpower'+  '%04d' % self.current_step + ".png")
+                plt.savefig(fig_dir + "/" +str(self.frameskip) + 'powercontrollineartestpower'+  '%04d' % self.current_step + ".png")
                 plt.clf()
             
 
@@ -209,11 +182,11 @@ class EnvRLAM(gym.Env):
             self.buffer[0:3] = (self.buffer[0:3] - np.mean(self.buffer[0:3], axis = (1,2))[:, None, None])/(np.std(self.buffer[0:3], axis = (1,2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps > 19:
 
-                minmax_reward = (np.max(self.depths[20:]) - np.min(self.depths[20:]))/25e-6 
-                gradient_reward = np.mean(np.abs(np.diff(self.depths[20:])/25e-6))
-                reward = self.reward/20 - 0.5*minmax_reward 
+            if self.timesteps == 1:
+                minmax_reward = (np.max(self.depths[1:]) - np.min(self.depths[1:]))/25e-6 
+                gradient_reward = np.mean(np.abs(np.diff(self.depths[1:])/25e-6))
+                reward = self.reward - 0.5*minmax_reward 
 
                 if self.verbose == 2:
                     print(reward, "reward", "velocity", V, "power", power, "timestep", self.total_steps, "amplitude", minmax_reward)
@@ -289,7 +262,7 @@ class EnvRLAM(gym.Env):
                 breakpoint()
                 print('saved')
             plt.title("time: " + str(V) + " power: " + str(power)) 
-            plt.savefig(buffer_dir + str(index) + "closesquarebuffer" +  '%04d' % self.current_step + ".png")   
+            plt.savefig(buffer_dir + str(index) + "closelinearbuffer" +  '%04d' % self.current_step + ".png")   
             
             plt.clf()
             plt.close('all')
