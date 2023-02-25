@@ -7,10 +7,11 @@ import json
 from stable_baselines3.common.vec_env import DummyVecEnv, SubprocVecEnv, VecNormalize
 from stable_baselines3 import PPO, A2C
 
-# from velocity_linear_gym import EnvRLAM as velocitysquareEnvRLAM
+# from velocity_linear_gym import EnvRLAM as velocityliearEnvRLAM
 
 from power_linear_gym import EnvRLAM as powerlinearEnvRLAM
 from velocity_linear_gym import EnvRLAM as velocitylinearEnvRLAM
+from power_linear_gym_varyig_V import EnvRLAM as varyingpoewerlinearEnvRLAM
 
 from stable_baselines3.ppo import MlpPolicy, CnnPolicy
 from stable_baselines3.common.cmd_util import make_vec_env
@@ -354,6 +355,18 @@ def main():
                 plot=False, frameskip=frameskip, verbose=verbose)
         else:
             env = SubprocVecEnv([make_env(powerlinearEnvRLAM(
+                plot=False, frameskip=frameskip, verbose=verbose), i) for i in range(num_cpu)])
+            env = VecMonitor(env, log_dir)
+    elif parameter == 'varyingpower':
+
+        if debug:
+            print("debugging")
+            num_cpu = 1
+
+            env = varyingpoewerlinearEnvRLAM(
+                plot=False, frameskip=frameskip, verbose=verbose)
+        else:
+            env = SubprocVecEnv([make_env(varyingpoewerlinearEnvRLAM(
                 plot=False, frameskip=frameskip, verbose=verbose), i) for i in range(num_cpu)])
             env = VecMonitor(env, log_dir)
 
