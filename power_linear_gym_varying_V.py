@@ -56,6 +56,7 @@ class EnvRLAM(gym.Env):
         self.frameskip = frameskip
         self.verbose = verbose
         self.total_steps = 0
+        self.count = 0
         buffer = np.stack((self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0],
                                 self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0],
                                 self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0], self.ETenv.theta[0:self.squaresize, 0:self.squaresize, 0]))
@@ -64,8 +65,10 @@ class EnvRLAM(gym.Env):
         
     def step(self, action):
 
-        time = 250e-6
+        time = 125-6
         power = action[0]*250 + 250 
+        V = 125e-6*0.8/time
+        A = 10e-6*0.8
 
         for m in range(self.frameskip):
             
@@ -73,7 +76,12 @@ class EnvRLAM(gym.Env):
 
             self.current_step += 1
 
-            V =  125e-6*0.8/time
+            if count == 0:
+                V += A
+            elif count == 1:
+                V = V
+            else:
+                V -= A
         
             self.velocity.append(V)
             self.power.append(power)
@@ -84,13 +92,22 @@ class EnvRLAM(gym.Env):
             
             angle = 0
             self.dir = 'right'
+            total_distance = 2500e-6*0.8 - 250e-6
 
-            if self.distance > 2500e-6*0.8 - 125e-6:
+            if (count == 0 & self.distance == total_distance/3):
+                self.distance = 0
+                self.timesteps += 1
+                count += 1
+            elif (count == 1 & self.distance == total_distance/3):
+                self.distance = 0
+                self.timesteps += 1
+                count += 1
+            elif (count == 2 & self.distance == total_distance/3):
                 self.timesteps += 1
             
             self.ETenv.forward(time, angle, V = V, P = power)
            
-            self.distance += 125e-6*0.8
+            self.distance += V * time
         
             meltpool = self.ETenv.meltpool()
             self.depths.append(meltpool)
@@ -182,10 +199,10 @@ class EnvRLAM(gym.Env):
 
             obs = self.buffer
 
-            if self.timesteps == 1:
-                minmax_reward = (np.max(self.depths[1:]) - np.min(self.depths[1:]))/25e-6 
-                gradient_reward = np.mean(np.abs(np.diff(self.depths[1:])/25e-6))
-                reward = self.reward - 0.5*minmax_reward 
+            if self.timesteps == 3:
+                minmax_reward = (np.max(self.depths[3:]) - np.min(self.depths[3:]))/25e-6 
+                gradient_reward = np.mean(np.abs(np.diff(self.depths[3:])/25e-6))
+                reward = self.reward/3 - 0.5*minmax_reward 
 
                 if self.verbose == 2:
                     print(reward, "reward", "velocity", V, "power", power, "timestep", self.total_steps, "amplitude", minmax_reward)
