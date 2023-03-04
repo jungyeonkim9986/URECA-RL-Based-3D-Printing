@@ -31,7 +31,7 @@ class EnvRLAM(gym.Env):
     # They must be gym.spaces objects    
         self.plot = plot
         self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=np.float64)
-        self.squaresize = 20
+        self.squaresize = 10
         self.spacing = 20e-6
         self.observation_space = spaces.Box(low=300, high=20000, shape=(9, self.squaresize, self.squaresize,), dtype=np.float64)
         self.ETenv = ET(20e-6, V = 0.8, bc = 'flux', spacing = self.spacing)
@@ -92,7 +92,7 @@ class EnvRLAM(gym.Env):
             
             angle = 0
             self.dir = 'right'
-            total_distance = 1875e-6*0.8 - 125e-6
+            total_distance = 1250e-6*0.8 - 125e-6
  
             if (self.timesteps == 0 and self.distance >= (total_distance/3)):
                 self.distance = 0
