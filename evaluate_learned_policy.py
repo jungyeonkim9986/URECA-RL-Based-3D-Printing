@@ -16,6 +16,10 @@ from power_triangle_gym import EnvRLAM as powertriangleEnvRLAM
 
 from velocity_triangle_gym import EnvRLAM as velocitytriangleEnvRLAM   
 
+from power_linear_gym import EnvRLAM as powerlinearEnvRLAM
+
+from velocity_linear_gym import EnvRLAM as velocitylinearEnvRLAM
+
 
 
 from stable_baselines3.ppo import MlpPolicy, CnnPolicy
@@ -87,7 +91,14 @@ def main():
         
         elif parameter == 'velocity':
 
-            env = velocitytriangleEnvRLAM(plot = True, frameskip= 1)        
+            env = velocitytriangleEnvRLAM(plot = True, frameskip= 1)    
+            
+    #if path == 'linear':
+    #    if parameter == 'power':
+    #        env = powerlinearEnvRLAM(plot = True, frameskip= 1)
+
+    #    elif parameter == 'velocity':
+    #        env = velocitylinearEnvRLAM(plot = True, frameskip= 1)    
     
         
     model = PPO.load(model_filename)
