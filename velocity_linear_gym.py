@@ -60,17 +60,24 @@ class EnvRLAM(gym.Env):
         self.buffer = (buffer - np.mean(buffer))
 
     def step(self, action):
-        time = action[0]*102.5e-6 + 140e-6
-        power = 145
+        time = 125e-6
+        power = action[0]*250 + 250 
+        V = 125e-6*0.8/time
+        A = 0.01
+        total_distance = 1250e-6*0.8 - 125e-6
+
         for m in range(self.frameskip):
+            
             done = False
-
+ 
             self.current_step += 1
-
-            V = 100e-6/time
-
-            self.velocity.append(V)
-            self.power.append(power)
+ 
+            if self.timesteps == 0:
+                V += A
+            elif self.timesteps == 1:
+                V = V
+            elif self.timesteps == 2:
+                V -= A
 
             idx = self.current_step - 1
             if idx < 0:
@@ -79,11 +86,17 @@ class EnvRLAM(gym.Env):
             angle = 0
             self.dir = 'right'
 
-            if self.distance > 1250e-6*0.8 - 125e-6:
+ 
+            if (self.timesteps == 0 and self.distance >= (total_distance/3)):
+                self.distance = 0
                 self.timesteps += 1
-
-
-            self.ETenv.forward(time, angle, V=V, P=power)
+            elif (self.timesteps == 1 and self.distance >= (total_distance/3)):
+                self.distance = 0
+                self.timesteps += 1
+            elif (self.timesteps == 2 and self.distance >= (total_distance/3)):
+                self.timesteps += 1
+            
+            self.ETenv.forward(time, angle, V = V, P = power)
 
             self.distance += 125e-6*0.8
 
@@ -186,12 +199,12 @@ class EnvRLAM(gym.Env):
                                 :, None, None])/(np.std(self.buffer[0:3], axis=(1, 2))[:, None, None] + 1e-10)
 
             obs = self.buffer
-            if self.timesteps == 1:
+            if self.timesteps == 3:
                 minmax_reward = (
-                    np.max(self.depths[1:]) - np.min(self.depths[1:]))/25e-6
+                    np.max(self.depths[3:]) - np.min(self.depths[3:]))/25e-6
                 gradient_reward = np.mean(
-                    np.abs(np.diff(self.depths[1:])/25e-6))
-                reward = self.reward - 0.5*minmax_reward
+                    np.abs(np.diff(self.depths[3:])/25e-6))
+                reward = self.reward/3 - 0.5*minmax_reward
                 if self.verbose == 2:
                     print(reward, "reward", "velocity", V, "power", power,
                           "timestep", self.total_steps, "amplitude", minmax_reward)
@@ -256,7 +269,7 @@ class EnvRLAM(gym.Env):
     def plot_buffer(self, action):
         time = action[0]*125e-6 + 140e-6
         power = 145
-        V = 100e-6/time
+        V = 125e-6/time
         buffer_dir = fig_dir + '/buffer/'
         if not os.path.exists(buffer_dir):
             os.makedirs(buffer_dir)
