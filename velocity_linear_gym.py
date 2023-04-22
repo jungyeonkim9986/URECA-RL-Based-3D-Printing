@@ -72,12 +72,30 @@ class EnvRLAM(gym.Env):
  
             self.current_step += 1
  
-            if self.timesteps == 0:
-                V += A
-            elif self.timesteps == 1:
-                V = V
-            elif self.timesteps == 2:
-                V -= A
+             # v = u + at
+            if (self.ETenv.time < times[0]):
+                V = 0
+            elif (self.ETenv.time < times[1]):
+                if (V = 0):
+                    V = velocities[0]
+                else:
+                    V = velocities[0] + (((velocities[1] - velocities[0])/(times[1] - times[0])) * (times[1] - self.ETenv.time))
+            elif (self.ETenv.time < times[2]):
+                V = velocities[1] + (((velocities[2] - velocities[1])/(times[2] - times[1])) * (times[2] - self.ETenv.time))
+            elif (self.ETenv.time < times[3]):
+                V = velocities[2] + (((velocities[3] - velocities[2])/(times[3] - times[2])) * (times[3] - self.ETenv.time))
+            elif (self.ETenv.time < times[4]):
+                V = velocities[3] + (((velocities[4] - velocities[3])/(times[4] - times[3])) * (times[4] - self.ETenv.time))
+            elif (self.ETenv.time < times[5]):
+                V = velocities[4] + (((velocities[5] - velocities[4])/(times[5] - times[4])) * (times[5] - self.ETenv.time))
+            elif (self.ETenv.time < times[6]):
+                V = velocities[5] + (((velocities[6] - velocities[5])/(times[6] - times[5])) * (times[6] - self.ETenv.time))
+            elif (self.ETenv.time < times[7]):
+                V = velocities[6] + (((velocities[7] - velocities[6])/(times[7] - times[6])) * (times[7] - self.ETenv.time))
+            elif (self.ETenv.time < times[8]):
+                V = velocities[7] + (((velocities[8] - velocities[7])/(times[8] - times[7])) * (times[8] - self.ETenv.time))
+            elif (self.ETenv.time < times[9]):
+                V = velocities[8] + (((velocities[9] - velocities[8])/(times[9] - times[8])) * (times[9] - self.ETenv.time))
 
             idx = self.current_step - 1
             if idx < 0:
