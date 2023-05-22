@@ -66,9 +66,10 @@ class EnvRLAM(gym.Env):
     def step(self, action):
  
         time = 125e-6
+        times = [0.11333928, 0.17975714, 0.26484487, 0.34925284, 0.43421465, 0.52082445, 0.60742631, 0.69374814, 0.78009799, 0.87720512]
+        velocities = [0., 1.50561910, 1.17525759, 1.18472215, 1.17699945, 1.15460373, 1.15470962, 1.15845558, 1.15807953, 1.02979056]
         power = action[0]*250 + 250 
-        V = 125e-6*0.8/time
-        A = 0.01
+
  
         for m in range(self.frameskip):
             
@@ -76,12 +77,30 @@ class EnvRLAM(gym.Env):
  
             self.current_step += 1
  
-            if self.timesteps == 0:
-                V += A
-            elif self.timesteps == 1:
-                V = V
-            elif self.timesteps == 2:
-                V -= A
+            # v = u + at
+            if (self.ETenv.time < times[0]):
+                V = 0
+            elif (self.ETenv.time < times[1]):
+                if (V = 0):
+                    V = velocities[0]
+                else:
+                    V = velocities[0] + (((velocities[1] - velocities[0])/(times[1] - times[0])) * (times[1] - self.ETenv.time))
+            elif (self.ETenv.time < times[2]):
+                V = velocities[1] + (((velocities[2] - velocities[1])/(times[2] - times[1])) * (times[2] - self.ETenv.time))
+            elif (self.ETenv.time < times[3]):
+                V = velocities[2] + (((velocities[3] - velocities[2])/(times[3] - times[2])) * (times[3] - self.ETenv.time))
+            elif (self.ETenv.time < times[4]):
+                V = velocities[3] + (((velocities[4] - velocities[3])/(times[4] - times[3])) * (times[4] - self.ETenv.time))
+            elif (self.ETenv.time < times[5]):
+                V = velocities[4] + (((velocities[5] - velocities[4])/(times[5] - times[4])) * (times[5] - self.ETenv.time))
+            elif (self.ETenv.time < times[6]):
+                V = velocities[5] + (((velocities[6] - velocities[5])/(times[6] - times[5])) * (times[6] - self.ETenv.time))
+            elif (self.ETenv.time < times[7]):
+                V = velocities[6] + (((velocities[7] - velocities[6])/(times[7] - times[6])) * (times[7] - self.ETenv.time))
+            elif (self.ETenv.time < times[8]):
+                V = velocities[7] + (((velocities[8] - velocities[7])/(times[8] - times[7])) * (times[8] - self.ETenv.time))
+            elif (self.ETenv.time < times[9]):
+                V = velocities[8] + (((velocities[9] - velocities[8])/(times[9] - times[8])) * (times[9] - self.ETenv.time))
         
             self.velocity.append(V)
             self.power.append(power)
