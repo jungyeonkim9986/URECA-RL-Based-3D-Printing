@@ -23,7 +23,7 @@ from velocity_linear_gym import EnvRLAM as velocitylinearEnvRLAM
 
 
 from stable_baselines3.ppo import MlpPolicy, CnnPolicy
-from stable_baselines3.common.cmd_util import make_vec_env
+from stable_baselines3.common.env_util import make_vec_env
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
@@ -43,7 +43,7 @@ from stable_baselines3.common.callbacks import BaseCallback
 
 
 
-from stable_baselines3.common.vec_env import VecEnvWrapper
+from stable_baselines3.common.vec_env.base_vec_env import VecEnvWrapper
 import numpy as np
 import time
 from collections import deque
@@ -92,13 +92,12 @@ def main():
         elif parameter == 'velocity':
 
             env = velocitytriangleEnvRLAM(plot = True, frameskip= 1)    
-            
-    #if path == 'linear':
-    #    if parameter == 'power':
-    #        env = powerlinearEnvRLAM(plot = True, frameskip= 1)
+    if path == 'linear':
+        if parameter == 'power':
+            env = powerlinearEnvRLAM(plot = True, frameskip= 1)
 
-    #    elif parameter == 'velocity':
-    #        env = velocitylinearEnvRLAM(plot = True, frameskip= 1)    
+        elif parameter == 'velocity':
+            env = velocitylinearEnvRLAM(plot = True, frameskip= 1)    
     
         
     model = PPO.load(model_filename)
@@ -114,5 +113,6 @@ def main():
         
         if np.any(dones) == True:
             break
+
 if __name__ == "__main__":
     main()

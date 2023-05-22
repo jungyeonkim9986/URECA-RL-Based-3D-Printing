@@ -11,10 +11,9 @@ from stable_baselines3 import PPO, A2C
 
 from power_linear_gym import EnvRLAM as powerlinearEnvRLAM
 from velocity_linear_gym import EnvRLAM as velocitylinearEnvRLAM
-from power_linear_gym_varyig_V import EnvRLAM as varyingpoewerlinearEnvRLAM
 
 from stable_baselines3.ppo import MlpPolicy, CnnPolicy
-from stable_baselines3.common.cmd_util import make_vec_env
+from stable_baselines3.common.env_util import make_vec_env
 import numpy as np
 import torch as th
 import matplotlib.pyplot as plt
@@ -33,7 +32,7 @@ from stable_baselines3.common.noise import NormalActionNoise
 from stable_baselines3.common.callbacks import BaseCallback
 
 
-from stable_baselines3.common.vec_env import VecEnvWrapper
+from stable_baselines3.common.vec_env.base_vec_env import VecEnvWrapper
 import numpy as np
 import time
 from collections import deque
@@ -355,18 +354,6 @@ def main():
                 plot=False, frameskip=frameskip, verbose=verbose)
         else:
             env = SubprocVecEnv([make_env(powerlinearEnvRLAM(
-                plot=False, frameskip=frameskip, verbose=verbose), i) for i in range(num_cpu)])
-            env = VecMonitor(env, log_dir)
-    elif parameter == 'varyingpower':
-
-        if debug:
-            print("debugging")
-            num_cpu = 1
-
-            env = varyingpoewerlinearEnvRLAM(
-                plot=False, frameskip=frameskip, verbose=verbose)
-        else:
-            env = SubprocVecEnv([make_env(varyingpoewerlinearEnvRLAM(
                 plot=False, frameskip=frameskip, verbose=verbose), i) for i in range(num_cpu)])
             env = VecMonitor(env, log_dir)
 
