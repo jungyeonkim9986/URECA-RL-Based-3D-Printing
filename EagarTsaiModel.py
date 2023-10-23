@@ -492,9 +492,9 @@ class EagarTsai():
         self.dimstep = resolution
         self.time = 0
         b = spacing
-        self.xs = np.arange(-b, 1000e-6 + b, step=self.dimstep)
-        self.ys = np.arange(-b, 1000e-6 + b, step=self.dimstep)
-        self.zs = np.arange(-300e-6, 0 + self.dimstep, step=self.dimstep)
+        self.xs = np.arange(-2*b, 2000e-6 + 2*b, step=self.dimstep)
+        self.ys = np.arange(-2*b, 2000e-6 + 2*b, step=self.dimstep)
+        self.zs = np.arange(-600e-6, 0 + self.dimstep, step=self.dimstep)
 
         self.theta = np.ones((len(self.xs), len(self.ys), len(self.zs)))*300
         self.toggle = np.zeros((len(self.xs), len(self.ys)))
