@@ -35,8 +35,8 @@ def plot(theta, nrows, ncols, xs, ys, zs):
     pcm2 = axes[2].pcolormesh(zs, ys, theta[xcurrent, :, :],
                               shading='gouraud', cmap='jet', vmin=300, vmax=1673)
     pcms = [pcm0, pcm1, pcm2]
-    scale_x = 1e-6
-    scale_y = 1e-6
+    scale_x = 1e-3
+    scale_y = 1e-3
     ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
     ticks_y = ticker.FuncFormatter(lambda y, pos: '{0:g}'.format(y/scale_y))
     iteration = 0
@@ -47,7 +47,7 @@ def plot(theta, nrows, ncols, xs, ys, zs):
         figure.colorbar(pcm, ax=ax)
         if iteration > 0:
             plt.sca(ax)
-            plt.xticks([-300e-6, 0])
+            plt.xticks([-300e-3, 0])
         iteration += 1
 
     figure.tight_layout()
@@ -276,8 +276,8 @@ class Solution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-6
-        scale_y = 1e-6
+        scale_x = 1e-3
+        scale_y = 1e-3
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -290,7 +290,7 @@ class Solution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-6, 0])
+                plt.xticks([-300e-3, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -367,8 +367,8 @@ class CornerSolution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-6
-        scale_y = 1e-6
+        scale_x = 1e-3
+        scale_y = 1e-3
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -381,7 +381,7 @@ class CornerSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-6, 0])
+                plt.xticks([-300e-3, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -456,8 +456,8 @@ class EdgeSolution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-6
-        scale_y = 1e-6
+        scale_x = 1e-3
+        scale_y = 1e-3
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -470,7 +470,7 @@ class EdgeSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-6, 0])
+                plt.xticks([-300e-3, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -479,22 +479,23 @@ class EagarTsai():
 
     "Produce an analytical E-T solution"
 
-    def __init__(self, resolution, V=0.8, bc='flux', spacing=20e-6):
+    # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
+    def __init__(self, resolution, V=0.8, bc='flux', spacing=20e-3):
         self.P = 200
         self.V = V
         self.sigma = 13.75e-6
         self.A = 0.3
-        self.rho = 7910
-        self.cp = 505
-        self.k = 21.5
+        self.rho = 8000
+        self.cp = 500
+        self.k = 15
         self.bc = bc
         self.step = 0
         self.dimstep = resolution
         self.time = 0
         b = spacing
-        self.xs = np.arange(-2*b, 2000e-6 + 2*b, step=self.dimstep)
-        self.ys = np.arange(-2*b, 2000e-6 + 2*b, step=self.dimstep)
-        self.zs = np.arange(-600e-6, 0 + self.dimstep, step=self.dimstep)
+        self.xs = np.arange(-b, 1000e-3 + b, step=self.dimstep)
+        self.ys = np.arange(-b, 1000e-3 + b, step=self.dimstep)
+        self.zs = np.arange(-300e-3, 0 + self.dimstep, step=self.dimstep)
 
         self.theta = np.ones((len(self.xs), len(self.ys), len(self.zs)))*300
         self.toggle = np.zeros((len(self.xs), len(self.ys)))
@@ -779,7 +780,7 @@ class EagarTsai():
     def reset(self):
         self.theta = np.ones(
             (len(self.xs), len(self.ys), len(self.zs)))*self.T0
-        self.location = [0, 0]
+        self.location = [3, 15]
         self.location_idx = [
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.oldellipse = np.zeros((len(self.xs), len(self.ys)))
@@ -820,8 +821,8 @@ class EagarTsai():
         pcm2 = axes[2].pcolormesh(self.ys, self.zs, self.theta[xcurrent, :, :].T,
                                   shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-6
-        scale_y = 1e-6
+        scale_x = 1e-3
+        scale_y = 1e-3
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
