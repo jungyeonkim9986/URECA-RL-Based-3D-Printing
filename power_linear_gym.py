@@ -44,7 +44,7 @@ class EnvRLAM(gym.Env):
         self.spacing = 20e-3
         self.observation_space = spaces.Box(low=300, high=20000, shape=(9, self.squaresize, self.squaresize,),
                                             dtype=np.float64)
-        self.ETenv = ET(20e-3, V=0.8, bc='flux', spacing=self.spacing)
+        self.ETenv = ET(20e-3, V=0.02, bc='flux', spacing=self.spacing)
         self.current_step = 0
         self.depths = []
         self.times = []
