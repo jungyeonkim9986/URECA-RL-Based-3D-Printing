@@ -328,7 +328,7 @@ def main():
 
     log_dir = "training_checkpoints/ppo_linear_"+parameter
     os.makedirs(log_dir, exist_ok=True)
-    frameskip = 1
+    frameskip = 10
     model_dir = "trained_models"
     os.makedirs(model_dir, exist_ok=True)
     tb_logdir = 'tensorboard_logs/'
@@ -368,8 +368,8 @@ def main():
                 tensorboard_log=tb_logdir+"ppo_linear_" + parameter)
 
     callback = SaveOnBestTrainingRewardCallback(
-        check_freq=1000, log_dir=log_dir)
-    timesteps = 1000000
+        check_freq=10, log_dir=log_dir)
+    timesteps = 10
     model.learn(total_timesteps=timesteps,
                 tb_log_name="ppo_linear_" + parameter, callback=callback)
 
@@ -383,7 +383,6 @@ def make_env(env_id, rank, seed=0):
     def _init():
         return env_id
     return _init
-
 
 if __name__ == "__main__":
     main()
