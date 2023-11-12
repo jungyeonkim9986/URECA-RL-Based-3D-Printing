@@ -295,9 +295,9 @@ class EnvRLAM(gym.Env):
         pass
 
     def plot_buffer(self, action):
-        time = action[0] * 125 + 140
+        time = action[0] * 0.004 + 0.003
         power = 145
-        V = 20e-3 / time
+        V = 8e-5 / time
         buffer_dir = fig_dir + '/buffer/'
         if not os.path.exists(buffer_dir):
             os.makedirs(buffer_dir)
