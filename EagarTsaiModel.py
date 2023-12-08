@@ -480,10 +480,10 @@ class EagarTsai():
     "Produce an analytical E-T solution"
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
-    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-3):
-        self.P = 200
+    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-4):
+        self.P = 1450
         self.V = V
-        self.sigma = 13.75e-6
+        self.sigma = 2e-3
         self.A = 0.3
         self.rho = 8000
         self.cp = 500
@@ -493,15 +493,15 @@ class EagarTsai():
         self.dimstep = resolution
         self.time = 0
         b = spacing
-        self.xs = np.arange(-b, 1000e-3 + b, step=self.dimstep)
-        self.ys = np.arange(-b, 1000e-3 + b, step=self.dimstep)
-        self.zs = np.arange(-300e-3, 0 + self.dimstep, step=self.dimstep)
+        self.xs = np.arange(-b, 0.01 + b, step=self.dimstep)
+        self.ys = np.arange(-b, 0.01 + b, step=self.dimstep)
+        self.zs = np.arange(-0.003, 0 + self.dimstep, step=self.dimstep)
 
         self.theta = np.ones((len(self.xs), len(self.ys), len(self.zs)))*300
         self.toggle = np.zeros((len(self.xs), len(self.ys)))
         self.D = self.k/(self.rho*self.cp)
 
-        self.location = [0, 0]
+        self.location = [3, 10]
         self.location_idx = [
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.a = 4
@@ -616,7 +616,7 @@ class EagarTsai():
         self.visitedx.append(self.location_idx[0])
         self.visitedy.append(self.location_idx[1])
 
-    def forward(self, dt, phi, V=0.8, P=200):
+    def forward(self, dt, phi, V=0.02, P=1450):
         self.P = P
         self.V = V
         params = {'P': self.P,
@@ -780,7 +780,7 @@ class EagarTsai():
     def reset(self):
         self.theta = np.ones(
             (len(self.xs), len(self.ys), len(self.zs)))*self.T0
-        self.location = [3, 15]
+        self.location = [3, 10]
         self.location_idx = [
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.oldellipse = np.zeros((len(self.xs), len(self.ys)))

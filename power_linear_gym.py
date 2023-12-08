@@ -40,7 +40,7 @@ class EnvRLAM(gym.Env):
         # They must be gym.spaces objects
         self.plot = plot
         self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=np.float64)
-        self.squaresize = 20
+        self.squaresize = 10
         self.spacing = 20e-3
         self.observation_space = spaces.Box(low=300, high=20000, shape=(9, self.squaresize, self.squaresize,),
                                             dtype=np.float64)
@@ -84,7 +84,7 @@ class EnvRLAM(gym.Env):
 
     def step(self, action):
 
-        time = [0.00397, 0.00983, 0.01205,0.01594, 0.01997, 0.02395, 0.02791, 0.03196, 0.0359]
+        time = [0, 0.00397, 0.00983, 0.01205,0.01594, 0.01997, 0.02395, 0.02791, 0.03196, 0.0359]
         power = action[0] * 250 + 250
         V = [0.01953078, 0.01974113, 0.02015934, 0.0135428, 0.03482298, 0.01917126, 0.0198257, 0.02003466, 0.02078936, 0.02000099]
 
@@ -99,7 +99,7 @@ class EnvRLAM(gym.Env):
 
             angle = 0
             self.dir = 'right'
-            total_distance = 1250e-3 * 0.8 - 125e-3
+            total_distance = 0.3
 
             if (self.distance < total_distance):
                 self.distance += V[self.current_step - 1] * time[self.current_step - 1]
@@ -117,7 +117,7 @@ class EnvRLAM(gym.Env):
                 self.indvel.append(V)
                 self.indpower.append(power)
 
-            reward = 1 - np.abs((55e-3 + meltpool) / 25e-3)
+            reward = 1 - np.abs((2e-3 + meltpool) / 1e-3)
 
             self.reward += reward
 
@@ -145,7 +145,7 @@ class EnvRLAM(gym.Env):
                 plt.xlim(0, highxlim)
                 plt.title(str(round(self.ETenv.time)) + r'[$s] ')
                 plt.plot(np.arange(0, np.max(np.array(self.times)), 0.01),
-                         -55 * np.ones(len(np.arange(0, np.max(np.array(self.times)), 0.01))), 'k--')
+                         -2 * np.ones(len(np.arange(0, np.max(np.array(self.times)), 0.01))), 'k--')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestdepth' + '%04d' % self.current_step + ".png")
 
@@ -211,8 +211,8 @@ class EnvRLAM(gym.Env):
             obs = self.buffer
 
             if self.timesteps > 9:
-                minmax_reward = (np.max(self.depths[10:]) - np.min(self.depths[10:])) / 25e-3
-                gradient_reward = np.mean(np.abs(np.diff(self.depths[10:]) / 25e-3))
+                minmax_reward = (np.max(self.depths[10:]) - np.min(self.depths[10:])) / 1e-3
+                gradient_reward = np.mean(np.abs(np.diff(self.depths[10:]) / 1e-3))
                 reward = self.reward/10 - 0.5 * minmax_reward
 
                 if self.verbose == 2:
@@ -296,7 +296,7 @@ class EnvRLAM(gym.Env):
 
     def plot_buffer(self, action):
         time = action[0] * 0.004 + 0.003
-        power = 145
+        power = 1450
         V = 8e-5 / time
         buffer_dir = fig_dir + '/buffer/'
         if not os.path.exists(buffer_dir):
