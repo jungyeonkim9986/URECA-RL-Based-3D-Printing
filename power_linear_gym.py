@@ -40,7 +40,7 @@ class EnvRLAM(gym.Env):
         # They must be gym.spaces objects
         self.plot = plot
         self.action_space = spaces.Box(low=np.array([-1]), high=np.array([1]), dtype=np.float64)
-        self.squaresize = 10
+        self.squaresize = 20
         self.spacing = 20e-3
         self.observation_space = spaces.Box(low=300, high=20000, shape=(9, self.squaresize, self.squaresize,),
                                             dtype=np.float64)
