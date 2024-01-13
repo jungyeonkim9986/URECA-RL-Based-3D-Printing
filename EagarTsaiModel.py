@@ -481,13 +481,13 @@ class EagarTsai():
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
     def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-4):
-        self.P = 1450
-        self.V = V
-        self.sigma = 2e-3
-        self.A = 0.3
-        self.rho = 8000
-        self.cp = 500
-        self.k = 15
+        self.P = 1450 #laser power
+        self.V = V #laser velocity
+        self.sigma = 2e-3 #laser diameter
+        self.A = 0.3 #absorptivity
+        self.rho = 8000 #material density
+        self.cp = 500 #heat capacity
+        self.k = 15 #thermal conductivity
         self.bc = bc
         self.step = 0
         self.dimstep = resolution
@@ -506,7 +506,7 @@ class EagarTsai():
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.a = 4
         self.times = []
-        self.T0 = 300
+        self.T0 = 300 #iniial temperature
         self.oldellipse = np.zeros((len(self.xs), len(self.ys)))
         self.store_idx = {}
         self.store = []
