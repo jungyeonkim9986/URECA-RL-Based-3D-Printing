@@ -19,7 +19,7 @@ def frame_tick(frame_width=2, tick_width=1.5):
 
                     width=tick_width)
 
-class Simulation:
+class MeltPoolSimulation:
     def __init__(self, frameskip=1, plot=False, fig_dir="results"):
         self.frameskip = frameskip
         self.current_step = 0
