@@ -28,7 +28,7 @@ class MeltPoolSimulation:
         self.indpower = []
         self.indvel = []
         self.squaresize = 20
-        self.spacing = 20e-3
+        self.spacing = 20e-4
         self.velocity = []
         self.power = []
         self.depths = []
@@ -66,7 +66,7 @@ class MeltPoolSimulation:
                 np.savetxt(fig_dir + "/" + "powercontrollinearvelocityframeskip" + str(self.frameskip),
                            np.array(self.velocity))
                 testfigs = self.ETenv.plot()
-                highxlim = np.max(self.times)
+                highxlim = np.max(time)
                 testfigs[0].savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollinear_test' + '%04d' % self.current_step + ".png")
                 plt.close()
@@ -74,15 +74,15 @@ class MeltPoolSimulation:
 
                 font_size = 14
                 plt.plot(np.array(self.times), np.array(self.depths) * 1e3, linewidth=2.0)
-                plt.ylim(-120, 10)
+                plt.ylim(-10, 10)
                 plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
                 plt.ylabel(r'Melt Depth, $d$, [$mm]', fontsize=font_size)
                 plt.plot(np.array(self.indtimes), np.array(self.inddepth) * 1e3, 'k.')
                 np.max(np.array(self.times))
                 plt.xlim(0, highxlim)
                 plt.title(str(round(self.ETenv.time)) + r'[$s] ')
-                plt.plot(np.arange(0, np.max(np.array(self.times)), 0.01),
-                         -2 * np.ones(len(np.arange(0, np.max(np.array(self.times)), 0.01))), 'k--')
+                plt.plot(np.arange(0, np.max(np.array(time)), 0.01),
+                         -2 * np.ones(len(np.arange(0, np.max(np.array(time)), 0.01))), 'k--')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestdepth' + '%04d' % self.current_step + ".png")
                 plt.close()
@@ -93,8 +93,8 @@ class MeltPoolSimulation:
                 plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
                 plt.ylabel(r'Velocity, $V$, [mm/s]', fontsize=font_size)
                 plt.xlim(0, highxlim)
-                plt.ylim(0, 3.0)
-                plt.title(str(round(self.ETenv.time)) + r'[$s] ')
+                plt.ylim(0, 0.1)
+                plt.title(str(round(self.ETenv.time)) + r'[$s]')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestvelocity' + '%04d' % self.current_step + ".png")
                 plt.close()
@@ -105,7 +105,7 @@ class MeltPoolSimulation:
                 plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
                 plt.ylabel(r'Power, $P$, [W]', fontsize=font_size)
                 plt.xlim(0, highxlim)
-                plt.ylim(-10, 600)
+                plt.ylim(-10, 1500)
                 plt.title(str(round(self.ETenv.time)) + r'[$s] ')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestpower' + '%04d' % self.current_step + ".png")
