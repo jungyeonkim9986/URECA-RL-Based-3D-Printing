@@ -480,7 +480,7 @@ class EagarTsai():
     "Produce an analytical E-T solution"
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
-    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-5):
+    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-3):
         self.P = 1450
         self.V = V
         self.sigma = 2e-3
