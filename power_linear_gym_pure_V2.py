@@ -23,6 +23,10 @@ class MeltPoolSimulation:
     def __init__(self, frameskip=1, plot=False, fig_dir="results"):
         self.frameskip = frameskip
         self.current_step = 0
+        self.indtimes = []
+        self.inddepth = []
+        self.indpower = []
+        self.indvel = []
         self.velocity = []
         self.power = []
         self.depths = []
@@ -30,7 +34,7 @@ class MeltPoolSimulation:
         self.distance = 0
         self.plot = plot
         self.fig_dir = fig_dir
-        self.ETenv = ET()   # Instance of the EagarTsai model for melt pool calculations
+        self.ETenv = ET(20e-3, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the EagarTsai model for melt pool calculations
 
     def step(self):
         # Time and velocity values from real-world printing
