@@ -35,8 +35,8 @@ def plot(theta, nrows, ncols, xs, ys, zs):
     pcm2 = axes[2].pcolormesh(zs, ys, theta[xcurrent, :, :],
                               shading='gouraud', cmap='jet', vmin=300, vmax=3000)
     pcms = [pcm0, pcm1, pcm2]
-    scale_x = 1
-    scale_y = 1
+    scale_x = 1e-6
+    scale_y = 1e-6
     ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
     ticks_y = ticker.FuncFormatter(lambda y, pos: '{0:g}'.format(y/scale_y))
     iteration = 0
@@ -47,7 +47,7 @@ def plot(theta, nrows, ncols, xs, ys, zs):
         figure.colorbar(pcm, ax=ax)
         if iteration > 0:
             plt.sca(ax)
-            plt.xticks([-300, 0])
+            plt.xticks([-300e-6, 0])
         iteration += 1
 
     figure.tight_layout()
@@ -119,7 +119,7 @@ def _freefunc(x, coeff, x_coord, y, z, phi, V, D, sigma, dt):
 def _cornersolve(xs, ys, zs, coeff, rxf, rxr, ry, rz, D, V, sigma, dt, dx, dy, phi):
     theta = np.ones((len(xs), len(ys), len(zs)))*300
     theta = np.ones((len(xs), len(ys), len(zs)))*300
-    theta += integrate.fixed_quad(_cornerfunc, dt/5000, dt, args=(
+    theta += integrate.fixed_quad(_cornerfunc, dt/5000000, dt, args=(
         coeff, xs[:, None, None, None], ys[None, :, None, None], zs[None, None, :, None], dx, dy, V, phi, D, sigma, dt), n=50)[0]
     return theta
 
@@ -276,8 +276,8 @@ class Solution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1
-        scale_y = 1
+        scale_x = 1e-6
+        scale_y = 1e-6
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -290,7 +290,7 @@ class Solution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300, 0])
+                plt.xticks([-300e-6, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -367,8 +367,8 @@ class CornerSolution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1
-        scale_y = 1
+        scale_x = 1e-6
+        scale_y = 1e-6
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -381,7 +381,7 @@ class CornerSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300, 0])
+                plt.xticks([-300e-6, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -456,8 +456,8 @@ class EdgeSolution():
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
                                   shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1
-        scale_y = 1
+        scale_x = 1e-6
+        scale_y = 1e-6
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -470,7 +470,7 @@ class EdgeSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300, 0])
+                plt.xticks([-300e-6, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -480,7 +480,7 @@ class EagarTsai():
     "Produce an analytical E-T solution"
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
-    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-3):
+    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-4):
         self.P = 1450
         self.V = V
         self.sigma = 2e-3
@@ -501,7 +501,7 @@ class EagarTsai():
         self.toggle = np.zeros((len(self.xs), len(self.ys)))
         self.D = self.k/(self.rho*self.cp)
 
-        self.location = [3, 10]
+        self.location = [3, 10] #starting point of laser
         self.location_idx = [
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.a = 4
@@ -821,27 +821,27 @@ class EagarTsai():
         pcm2 = axes[2].pcolormesh(self.ys, self.zs, self.theta[xcurrent, :, :].T,
                                   shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1
-        scale_y = 1
+        scale_x = 1e-6
+        scale_y = 1e-6
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
             lambda y, pos: '{0:g}'.format(y/scale_y))
         iteration = 0
         titles = ["X - Y plane", "X - Z plane", "Y - Z plane"]
-        axes[0].set_xlabel(r"x [$m]")
-        axes[0].set_ylabel(r"y [$m]")
-        axes[1].set_xlabel(r"x [$m]")
-        axes[1].set_ylabel(r"z [$m]")
-        axes[2].set_xlabel(r"y [$m]")
-        axes[2].set_ylabel(r"z [$m]")
+        axes[0].set_xlabel(r"x [$\mu$m]")
+        axes[0].set_ylabel(r"y [$\mu$m]")
+        axes[1].set_xlabel(r"x [$\mu$m]")
+        axes[1].set_ylabel(r"z [$\mu$m]")
+        axes[2].set_xlabel(r"y [$\mu$m]")
+        axes[2].set_ylabel(r"z [$\mu$m]")
 
         for axis, pcm, fig in zip(axes, pcms, figures):
             axis.set_aspect('equal')
             axis.xaxis.set_major_formatter(ticks_x)
             axis.yaxis.set_major_formatter(ticks_y)
 
-            axis.set_title(str(round(self.time*1e6)) + r'[$s] ' + "Power: " + str(int(np.around(
+            axis.set_title(str(round(self.time*1e6)) + r'[$\mu$s] ' + "Power: " + str(int(np.around(
                 self.P))) + "W" + " Velocity: " + str(np.around(self.V, decimals=2)) + r" [m/s]")
             clb = fig.colorbar(pcm, ax=axis)
             clb.ax.set_title(r'T [$K$]')
