@@ -27,6 +27,8 @@ class MeltPoolSimulation:
         self.inddepth = []
         self.indpower = []
         self.indvel = []
+        self.squaresize = 20
+        self.spacing = 20e-3
         self.velocity = []
         self.power = []
         self.depths = []
@@ -34,13 +36,13 @@ class MeltPoolSimulation:
         self.distance = 0
         self.plot = plot
         self.fig_dir = fig_dir
-        self.ETenv = ET(20e-3, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the EagarTsai model for melt pool calculations
+        self.ETenv = ET(20e-3, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the Eagar-Tsai model for melt pool calculations
 
     def step(self):
         # Time and velocity values from real-world printing
-        time = [0, 0.00397, 0.00983, 0.01205, 0.01594, 0.01997, 0.02395, 0.02791, 0.03196, 0.0359]
+        time = [0.00397, 0.00983, 0.01205, 0.01594, 0.01997, 0.02395, 0.02791, 0.03196, 0.0359]
         power = 1450  # Fixed power value for pure simulation
-        V = [0.01953078, 0.01974113, 0.02015934, 0.0135428, 0.03482298, 0.01917126, 0.0198257, 0.02003466, 0.02078936, 0.02000099]
+        V = [0.01974113, 0.02015934, 0.0135428, 0.03482298, 0.01917126, 0.0198257, 0.02003466, 0.02078936, 0.02000099] #V = 0.01953078 when t = 0
 
         for m in range(len(time)):
             self.current_step += 1
@@ -67,6 +69,7 @@ class MeltPoolSimulation:
                 highxlim = np.max(self.times)
                 testfigs[0].savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollinear_test' + '%04d' % self.current_step + ".png")
+                plt.close()
                 plt.clf()
 
                 font_size = 14
@@ -82,6 +85,7 @@ class MeltPoolSimulation:
                          -2 * np.ones(len(np.arange(0, np.max(np.array(self.times)), 0.01))), 'k--')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestdepth' + '%04d' % self.current_step + ".png")
+                plt.close()
 
                 plt.clf()
                 plt.plot(np.array(self.times), self.velocity)
@@ -93,6 +97,7 @@ class MeltPoolSimulation:
                 plt.title(str(round(self.ETenv.time)) + r'[$s] ')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestvelocity' + '%04d' % self.current_step + ".png")
+                plt.close()
 
                 plt.clf()
                 plt.plot(np.array(self.times), self.power)
@@ -104,6 +109,7 @@ class MeltPoolSimulation:
                 plt.title(str(round(self.ETenv.time)) + r'[$s] ')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestpower' + '%04d' % self.current_step + ".png")
+                plt.close()
 
                 plt.clf()
 
@@ -114,4 +120,3 @@ class MeltPoolSimulation:
 if __name__ == '__main__':
     sim = MeltPoolSimulation(plot=True)
     sim.step()
-    # Further processing or analysis can be done based on the simulation results
