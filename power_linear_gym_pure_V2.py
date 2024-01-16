@@ -36,7 +36,7 @@ class MeltPoolSimulation:
         self.distance = 0
         self.plot = plot
         self.fig_dir = fig_dir
-        self.ETenv = ET(20e-3, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the Eagar-Tsai model for melt pool calculations
+        self.ETenv = ET(20e-4, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the Eagar-Tsai model for melt pool calculations
 
     def step(self):
         # Time and velocity values from real-world printing
@@ -58,6 +58,11 @@ class MeltPoolSimulation:
             self.depths.append(meltpool)
             self.times.append(self.ETenv.time)
 
+            self.inddepth.append(meltpool)
+            self.indtimes.append(time[m])
+            self.indvel.append(V[m])
+            self.indpower.append(power)
+
             # Plotting diagnostics
             if self.plot:
                 np.savetxt(fig_dir + "/" + "powercontrollineartimesnorm", np.array(self.times))
@@ -73,7 +78,7 @@ class MeltPoolSimulation:
                 plt.clf()
 
                 font_size = 14
-                plt.plot(np.array(self.times), np.array(self.depths) * 1e3, linewidth=2.0)
+                plt.plot(np.array(self.indtimes), np.array(self.depths) * 1e3, linewidth=2.0)
                 plt.ylim(-10, 10)
                 plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
                 plt.ylabel(r'Melt Depth, $d$, [$mm]', fontsize=font_size)
@@ -88,10 +93,10 @@ class MeltPoolSimulation:
                 plt.close()
 
                 plt.clf()
-                plt.plot(np.array(self.times), self.velocity)
+                plt.plot(np.array(self.indtimes), self.velocity)
                 plt.plot(np.array(self.indtimes), np.array(self.indvel), 'k.', linewidth=2.0)
-                plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
-                plt.ylabel(r'Velocity, $V$, [mm/s]', fontsize=font_size)
+                plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
+                plt.ylabel(r'Velocity, $V$, [m/s]', fontsize=font_size)
                 plt.xlim(0, highxlim)
                 plt.ylim(0, 0.1)
                 plt.title(str(round(self.ETenv.time)) + r'[$s]')
@@ -100,9 +105,9 @@ class MeltPoolSimulation:
                 plt.close()
 
                 plt.clf()
-                plt.plot(np.array(self.times), self.power)
+                plt.plot(np.array(self.indtimes), self.power)
                 plt.plot(np.array(self.indtimes), np.array(self.indpower), 'k.', linewidth=2.0)
-                plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
+                plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
                 plt.ylabel(r'Power, $P$, [W]', fontsize=font_size)
                 plt.xlim(0, highxlim)
                 plt.ylim(-10, 1500)
