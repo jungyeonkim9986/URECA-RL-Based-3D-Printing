@@ -29,14 +29,14 @@ def plot(theta, nrows, ncols, xs, ys, zs):
     xcurrent = np.argmax(theta[:, len(ys)//2, -1])
 
     pcm0 = axes[0].pcolormesh(
-        ys, xs, theta[:, :, -1], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+        ys, xs, theta[:, :, -1], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
     pcm1 = axes[1].pcolormesh(zs, xs, theta[:, len(
-        ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+        ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
     pcm2 = axes[2].pcolormesh(zs, ys, theta[xcurrent, :, :],
-                              shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                              shading='gouraud', cmap='jet', vmin=300, vmax=3000)
     pcms = [pcm0, pcm1, pcm2]
-    scale_x = 1e-3
-    scale_y = 1e-3
+    scale_x = 1
+    scale_y = 1
     ticks_x = ticker.FuncFormatter(lambda x, pos: '{0:g}'.format(x/scale_x))
     ticks_y = ticker.FuncFormatter(lambda y, pos: '{0:g}'.format(y/scale_y))
     iteration = 0
@@ -47,7 +47,7 @@ def plot(theta, nrows, ncols, xs, ys, zs):
         figure.colorbar(pcm, ax=ax)
         if iteration > 0:
             plt.sca(ax)
-            plt.xticks([-300e-3, 0])
+            plt.xticks([-300, 0])
         iteration += 1
 
     figure.tight_layout()
@@ -185,7 +185,7 @@ def _edgefunc(x, coeff, x_coord, y, z, dx, V, phi, D, sigma, dt):
 def _edgesolve(xs, ys, zs, coeff, rxf, rxr, ry, rz, D, V, sigma, dt, dx, phi):
 
     theta = np.ones((len(xs), len(ys), len(zs)))*300
-    theta += integrate.fixed_quad(_edgefunc, dt/5000000, dt, args=(
+    theta += integrate.fixed_quad(_edgefunc, dt/5, dt, args=(
         coeff, xs[:, None, None, None], ys[None, :, None, None], zs[None, None, :, None], dx, V, phi, D, sigma, dt), n=50)[0]
 
     return theta
@@ -270,14 +270,14 @@ class Solution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000) #increased vmax to find temperature profile
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-3
-        scale_y = 1e-3
+        scale_x = 1
+        scale_y = 1
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -290,7 +290,7 @@ class Solution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-3, 0])
+                plt.xticks([-300, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -361,14 +361,14 @@ class CornerSolution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-3
-        scale_y = 1e-3
+        scale_x = 1
+        scale_y = 1
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -381,7 +381,7 @@ class CornerSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-3, 0])
+                plt.xticks([-300, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -450,14 +450,14 @@ class EdgeSolution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-3
-        scale_y = 1e-3
+        scale_x = 1
+        scale_y = 1
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
@@ -470,7 +470,7 @@ class EdgeSolution():
             figure.colorbar(pcm, ax=ax)
             if iteration > 0:
                 plt.sca(ax)
-                plt.xticks([-300e-3, 0])
+                plt.xticks([-300, 0])
             iteration += 1
         figure.tight_layout()
 
@@ -480,14 +480,14 @@ class EagarTsai():
     "Produce an analytical E-T solution"
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
-    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-4):
-        self.P = 1450 #laser power
-        self.V = V #laser velocity
-        self.sigma = 2e-3 #laser diameter
-        self.A = 0.3 #absorptivity
-        self.rho = 8000 #material density
-        self.cp = 500 #heat capacity
-        self.k = 15 #thermal conductivity
+    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-5):
+        self.P = 1450
+        self.V = V
+        self.sigma = 2e-3
+        self.A = 0.3
+        self.rho = 8000
+        self.cp = 500
+        self.k = 15
         self.bc = bc
         self.step = 0
         self.dimstep = resolution
@@ -506,7 +506,7 @@ class EagarTsai():
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.a = 4
         self.times = []
-        self.T0 = 300 #iniial temperature
+        self.T0 = 300
         self.oldellipse = np.zeros((len(self.xs), len(self.ys)))
         self.store_idx = {}
         self.store = []
@@ -815,33 +815,33 @@ class EagarTsai():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.xs, self.ys, self.theta[:, :, -1].T,
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm1 = axes[1].pcolormesh(self.xs, self.zs, self.theta[:, len(
-            self.ys)//2, :].T, shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+            self.ys)//2, :].T, shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcm2 = axes[2].pcolormesh(self.ys, self.zs, self.theta[xcurrent, :, :].T,
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-3
-        scale_y = 1e-3
+        scale_x = 1
+        scale_y = 1
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
             lambda y, pos: '{0:g}'.format(y/scale_y))
         iteration = 0
         titles = ["X - Y plane", "X - Z plane", "Y - Z plane"]
-        axes[0].set_xlabel(r"x [$\mu$m]")
-        axes[0].set_ylabel(r"y [$\mu$m]")
-        axes[1].set_xlabel(r"x [$\mu$m]")
-        axes[1].set_ylabel(r"z [$\mu$m]")
-        axes[2].set_xlabel(r"y [$\mu$m]")
-        axes[2].set_ylabel(r"z [$\mu$m]")
+        axes[0].set_xlabel(r"x [$m]")
+        axes[0].set_ylabel(r"y [$m]")
+        axes[1].set_xlabel(r"x [$m]")
+        axes[1].set_ylabel(r"z [$m]")
+        axes[2].set_xlabel(r"y [$m]")
+        axes[2].set_ylabel(r"z [$m]")
 
         for axis, pcm, fig in zip(axes, pcms, figures):
             axis.set_aspect('equal')
             axis.xaxis.set_major_formatter(ticks_x)
             axis.yaxis.set_major_formatter(ticks_y)
 
-            axis.set_title(str(round(self.time*1e6)) + r'[$\mu$s] ' + "Power: " + str(int(np.around(
+            axis.set_title(str(round(self.time*1e6)) + r'[$s] ' + "Power: " + str(int(np.around(
                 self.P))) + "W" + " Velocity: " + str(np.around(self.V, decimals=2)) + r" [m/s]")
             clb = fig.colorbar(pcm, ax=axis)
             clb.ax.set_title(r'T [$K$]')
@@ -895,20 +895,20 @@ class EagarTsai():
             np.argmax(self.theta[:, :, -1]), self.theta[:, :, -1].shape)[1]
 
         if calc_length:
-            prop = measure.regionprops(np.array(self.theta[:,:,-1]>1673, dtype = 'int'))
+            prop = measure.regionprops(np.array(self.theta[:,:,-1]>3000, dtype = 'int'))
             prop_l = prop[0].major_axis_length*self.dimstep
             length =  prop_l
 
         if calc_width:
-            prop = measure.regionprops(np.array(self.theta[:,:,-1]>1673, dtype = 'int'))
+            prop = measure.regionprops(np.array(self.theta[:,:,-1]>3000, dtype = 'int'))
             prop_w = prop[0].minor_axis_length*self.dimstep
             width = prop_w
 
         depths = []
         for j in range(len(self.ys)):
             for i in range(len(self.xs)):
-                if self.theta[i, j, -1] > 1673:
-                    g = interp.CubicSpline(self.zs, self.theta[i, j, :] - 1673)
+                if self.theta[i, j, -1] > 3000:
+                    g = interp.CubicSpline(self.zs, self.theta[i, j, :] - 3000)
                     root = optimize.brentq(g, self.zs[0], self.zs[-1])
 
                     depths.append(root)
