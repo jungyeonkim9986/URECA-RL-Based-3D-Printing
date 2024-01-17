@@ -29,11 +29,11 @@ def plot(theta, nrows, ncols, xs, ys, zs):
     xcurrent = np.argmax(theta[:, len(ys)//2, -1])
 
     pcm0 = axes[0].pcolormesh(
-        ys, xs, theta[:, :, -1], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+        ys, xs, theta[:, :, -1], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
     pcm1 = axes[1].pcolormesh(zs, xs, theta[:, len(
-        ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+        ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
     pcm2 = axes[2].pcolormesh(zs, ys, theta[xcurrent, :, :],
-                              shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                              shading='gouraud', cmap='jet', vmin=300, vmax=1673)
     pcms = [pcm0, pcm1, pcm2]
     scale_x = 1e-6
     scale_y = 1e-6
@@ -270,11 +270,11 @@ class Solution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000) #increased vmax to find temperature profile
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673) #increased vmax to find temperature profile
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
         scale_x = 1e-6
         scale_y = 1e-6
@@ -361,11 +361,11 @@ class CornerSolution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
         scale_x = 1e-6
         scale_y = 1e-6
@@ -450,11 +450,11 @@ class EdgeSolution():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.ys, self.xs, self.theta[:, :, -1],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm1 = axes[1].pcolormesh(self.zs, self.xs, self.theta[:, len(
-            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+            self.ys)//2, :], shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm2 = axes[2].pcolormesh(self.zs, self.ys, self.theta[xcurrent, :, :],
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
         scale_x = 1e-6
         scale_y = 1e-6
@@ -815,11 +815,11 @@ class EagarTsai():
         xcurrent = np.argmax(self.theta[:, len(self.ys)//2, -1])
 
         pcm0 = axes[0].pcolormesh(self.xs, self.ys, self.theta[:, :, -1].T,
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm1 = axes[1].pcolormesh(self.xs, self.zs, self.theta[:, len(
-            self.ys)//2, :].T, shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+            self.ys)//2, :].T, shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcm2 = axes[2].pcolormesh(self.ys, self.zs, self.theta[xcurrent, :, :].T,
-                                  shading='gouraud', cmap='jet', vmin=300, vmax=3000)
+                                  shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
         scale_x = 1e-6
         scale_y = 1e-6
@@ -895,20 +895,20 @@ class EagarTsai():
             np.argmax(self.theta[:, :, -1]), self.theta[:, :, -1].shape)[1]
 
         if calc_length:
-            prop = measure.regionprops(np.array(self.theta[:,:,-1]>3000, dtype = 'int'))
+            prop = measure.regionprops(np.array(self.theta[:,:,-1]>1673, dtype = 'int'))
             prop_l = prop[0].major_axis_length*self.dimstep
             length =  prop_l
 
         if calc_width:
-            prop = measure.regionprops(np.array(self.theta[:,:,-1]>3000, dtype = 'int'))
+            prop = measure.regionprops(np.array(self.theta[:,:,-1]>1673, dtype = 'int'))
             prop_w = prop[0].minor_axis_length*self.dimstep
             width = prop_w
 
         depths = []
         for j in range(len(self.ys)):
             for i in range(len(self.xs)):
-                if self.theta[i, j, -1] > 3000:
-                    g = interp.CubicSpline(self.zs, self.theta[i, j, :] - 3000)
+                if self.theta[i, j, -1] > 1673:
+                    g = interp.CubicSpline(self.zs, self.theta[i, j, :] - 1673)
                     root = optimize.brentq(g, self.zs[0], self.zs[-1])
 
                     depths.append(root)
