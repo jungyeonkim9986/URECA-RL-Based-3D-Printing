@@ -47,7 +47,7 @@ def plot(theta, nrows, ncols, xs, ys, zs):
         figure.colorbar(pcm, ax=ax)
         if iteration > 0:
             plt.sca(ax)
-            plt.xticks([-300e-6, 0])
+            plt.xticks([-300e-5, 0])
         iteration += 1
 
     figure.tight_layout()
@@ -217,6 +217,7 @@ class Solution():
         self.rho = params['rho']
         self.cp = params['cp']
         self.k = params['k']
+        self.angle = 0
         self.D = self.k/(self.rho*self.cp)
         self.dimstep = params['dimstep']
         self.xs = params['xs']
@@ -480,10 +481,10 @@ class EagarTsai():
     "Produce an analytical E-T solution"
 
     # Source: https://www.thyssenkrupp-materials.co.uk/stainless-steel-316l-14404.html
-    def __init__(self, resolution, V=0.02, bc='flux', spacing=20e-4):
-        self.P = 1450
+    def __init__(self, resolution, V=0.02, bc='flux', spacing=10e-5):
+        self.P = 2300
         self.V = V
-        self.sigma = 2e-3
+        self.sigma = 0.9e-3
         self.A = 0.3
         self.rho = 8000
         self.cp = 500
@@ -493,17 +494,31 @@ class EagarTsai():
         self.dimstep = resolution
         self.time = 0
         b = spacing
-        self.xs = np.arange(-b, 0.01 + b, step=self.dimstep)
-        self.ys = np.arange(-b, 0.01 + b, step=self.dimstep)
-        self.zs = np.arange(-0.003, 0 + self.dimstep, step=self.dimstep)
+        self.xs = np.arange(-b, 8000e-5 + b, step=self.dimstep)
+        self.ys = np.arange(-b, 2000e-5 + b, step=self.dimstep)
+        self.zs = np.arange(-300e-5, 0 + self.dimstep, step=self.dimstep)
 
         self.theta = np.ones((len(self.xs), len(self.ys), len(self.zs)))*300
         self.toggle = np.zeros((len(self.xs), len(self.ys)))
         self.D = self.k/(self.rho*self.cp)
 
-        self.location = [3, 10] #starting point of laser
-        self.location_idx = [
-            np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
+        # Convert x and y positions from microns to meters
+        x_position_meters = 3000e-6
+        y_position_meters = 10000e-6
+
+        # Set the new location
+        self.location = [x_position_meters, y_position_meters]
+
+        # Find the indices in the xs and ys arrays that are closest to the new position
+        x_index = np.argmin(np.abs(self.xs - x_position_meters))
+        y_index = np.argmin(np.abs(self.ys - y_position_meters))
+
+        # Update the location indices
+        self.location_idx = [x_index, y_index]
+
+        # self.location = [0.2, 0.2]
+        # self.location_idx = [
+        #     np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.a = 4
         self.times = []
         self.T0 = 300
@@ -513,6 +528,7 @@ class EagarTsai():
         self.visitedx = []
         self.visitedy = []
         self.state = None
+
         params = {'P': self.P,
                   'V': self.V,
                   'sigma': self.sigma,
@@ -578,6 +594,7 @@ class EagarTsai():
 
         self.location[0] += l*np.cos(phi)
         self.location[1] += l*np.sin(phi)
+
 
         self.location_idx[0] = np.argmin(np.abs(self.location[0] - self.xs))
         self.location_idx[1] = np.argmin(np.abs(self.location[1] - self.ys))
@@ -709,6 +726,7 @@ class EagarTsai():
 
         self.time += dt
 
+
     def check(self, dt, phi, V):
 
         rxf = self.a*np.sqrt(self.sigma**2 + 2*self.D*dt)
@@ -725,7 +743,7 @@ class EagarTsai():
             self.location[0], decimals=10),  np.round(self.location[1], decimals=10))
 
         self.oldellipse = ellipse
-        ## Uncomment these lines to plot the laser path through the domain, useful for troubleshooting paths
+        # # Uncomment these lines to plot the laser path through the domain, useful for troubleshooting paths
         # plt.pcolormesh(self.xs, self.ys, ellipse.T, shading = 'gouraud', cmap = 'viridis')
         # #plt.plot([self.location[0] + l_x, self.location[0]], [self.location[1] + l_y, self.location[1]], 'r.-')
         # # if self.state is not None:
@@ -758,6 +776,7 @@ class EagarTsai():
 
         return _solve(self.xs, self.ys, self.zs, coeff, rxf, rxr, ry, rz, self.D, self.V, self.sigma, dt)
 
+
     def graft(self, sol, phi):
         l = sol.V*sol.dt
         l_new_x = int(np.rint(sol.V*sol.dt*np.cos(phi)/self.dimstep))
@@ -777,10 +796,11 @@ class EagarTsai():
         self.visitedx.append(self.location_idx[0])
         self.visitedy.append(self.location_idx[1])
 
+
     def reset(self):
         self.theta = np.ones(
             (len(self.xs), len(self.ys), len(self.zs)))*self.T0
-        self.location = [3, 10]
+        self.location = [0.2, 0.2]
         self.location_idx = [
             np.argmin(np.abs(self.xs)), np.argmin(np.abs(self.ys))]
         self.oldellipse = np.zeros((len(self.xs), len(self.ys)))
@@ -821,29 +841,38 @@ class EagarTsai():
         pcm2 = axes[2].pcolormesh(self.ys, self.zs, self.theta[xcurrent, :, :].T,
                                   shading='gouraud', cmap='jet', vmin=300, vmax=1673)
         pcms = [pcm0, pcm1, pcm2]
-        scale_x = 1e-6
-        scale_y = 1e-6
+        scale_x = 1e-3
+        scale_y = 1e-3
         ticks_x = ticker.FuncFormatter(
             lambda x, pos: '{0:g}'.format(x/scale_x))
         ticks_y = ticker.FuncFormatter(
             lambda y, pos: '{0:g}'.format(y/scale_y))
         iteration = 0
         titles = ["X - Y plane", "X - Z plane", "Y - Z plane"]
-        axes[0].set_xlabel(r"x [$\mu$m]")
-        axes[0].set_ylabel(r"y [$\mu$m]")
-        axes[1].set_xlabel(r"x [$\mu$m]")
-        axes[1].set_ylabel(r"z [$\mu$m]")
-        axes[2].set_xlabel(r"y [$\mu$m]")
-        axes[2].set_ylabel(r"z [$\mu$m]")
+
+        axes_title_fontsize = 14
+
+        axes[0].set_xlabel(r"x [mm]", fontsize=axes_title_fontsize)
+        axes[0].set_ylabel(r"y [mm]", fontsize=axes_title_fontsize)
+        axes[1].set_xlabel(r"x [mm]", fontsize=axes_title_fontsize)
+        axes[1].set_ylabel(r"z [mm]", fontsize=axes_title_fontsize)
+        axes[2].set_xlabel(r"y [mm]", fontsize=axes_title_fontsize)
+        axes[2].set_ylabel(r"z [mm]", fontsize=axes_title_fontsize)
+
+        # Setting x-limit
+        x_min, x_max, y_min, y_max = 0, 8000e-5, 0, 2000e-5
+        axes[0].set_xlim([x_min, x_max])
+        axes[0].set_ylim([y_min, y_max])
+        axes[1].set_xlim([x_min, x_max])
+        axes[2].set_xlim([x_min, x_max])
 
         for axis, pcm, fig in zip(axes, pcms, figures):
             axis.set_aspect('equal')
             axis.xaxis.set_major_formatter(ticks_x)
             axis.yaxis.set_major_formatter(ticks_y)
 
-            axis.set_title(str(round(self.time*1e6)) + r'[$\mu$s] ' + "Power: " + str(int(np.around(
-                self.P))) + "W" + " Velocity: " + str(np.around(self.V, decimals=2)) + r" [m/s]")
-            clb = fig.colorbar(pcm, ax=axis)
+            axis.set_title(f"Time Stamp: {self.time:.2f}s")
+            clb = fig.colorbar(pcm, ax=axis, pad=0.1, fraction=0.046, aspect=10)
             clb.ax.set_title(r'T [$K$]')
             iteration += 1
         return figures
@@ -926,6 +955,7 @@ class EagarTsai():
         elif calc_width and calc_length:
             return width, length, depth 
         return depth
+
 
     def rotate(self, sol, phi):
 
