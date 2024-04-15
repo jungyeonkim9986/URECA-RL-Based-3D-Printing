@@ -31,7 +31,8 @@ def get_velocities_for_times(times_list, df):
     velocities = []
     for time in times_list:
         velocity = find_closest_velocity(time, df)
-        velocities.append(velocity)
+        velocity_m_s = velocity/1000
+        velocities.append(velocity_m_s)
     return velocities
 
 def get_velocity_list(csv_file_path, times_list):
@@ -57,7 +58,7 @@ class MeltPoolSimulation:
         self.distance = 0
         self.plot = plot
         self.fig_dir = fig_dir
-        self.ETenv = ET(10e-5, V=0.02, bc='flux', spacing=self.spacing)   # Instance of the Eagar-Tsai model for melt pool calculations
+        self.ETenv = ET(10e-5, V=0.025, bc='flux', spacing=self.spacing)   # Instance of the Eagar-Tsai model for melt pool calculations
 
     def step(self):
         # Time and velocity values from real-world printing
@@ -68,10 +69,11 @@ class MeltPoolSimulation:
                  1.34, 1.36, 1.38, 1.40, 1.42, 1.44, 1.46, 1.48, 1.50, 1.52, 1.54, 1.56, 1.58, 1.60, 1.62, 1.64, 1.66,
                  1.68, 1.70, 1.72, 1.74, 1.76, 1.78, 1.80, 1.82, 1.84, 1.86, 1.88, 1.90, 1.92, 1.94, 1.96, 1.98, 2.00,
                  2.02, 2.04, 2.06, 2.08, 2.10, 2.12, 2.14, 2.16, 2.18, 2.20, 2.22, 2.24, 2.26, 2.28, 2.30, 2.32, 2.34,
-                 2.36, 2.38, 2.40, 2.42, 2.44, 2.46, 2.48, 2.50, 2.52, 2.54, 2.56, 2.58, 2.60, 2.62, 2.64, 2.66, 2.68,
-                 2.70, 2.72, 2.74, 2.76, 2.78, 2.80, 2.82, 2.84, 2.86, 2.88, 2.90, 2.92, 2.94, 2.96, 2.98, 3.00, 3.02,
-                 3.04, 3.06, 3.08, 3.10, 3.12, 3.14, 3.16, 3.18, 3.20, 3.22, 3.24, 3.26, 3.28, 3.30, 3.32, 3.34, 3.36,
-                 3.38, 3.40]
+                 2.36, 2.38, 2.40, 2.42, 2.44, 2.46, 2.48, 2.50, 2.52, 2.54, 2.56, 2.58, 2.60]
+            # , 2.62, 2.64, 2.66, 2.68,
+            #      2.70, 2.72, 2.74, 2.76, 2.78, 2.80, 2.82, 2.84, 2.86, 2.88, 2.90, 2.92, 2.94, 2.96, 2.98, 3.00, 3.02,
+            #      3.04, 3.06, 3.08, 3.10, 3.12, 3.14, 3.16, 3.18, 3.20, 3.22, 3.24, 3.26, 3.28, 3.30, 3.32, 3.34, 3.36,
+            #      3.38, 3.40]
         power = 2300  # Fixed power value for pure simulation
         csv_file_path = r'C:\Users\willi\PycharmProjects\pythonProject\URECA-RL-Based-3D-Printing/position_21_raw.csv'
         velocity = get_velocity_list(csv_file_path, times)
@@ -149,42 +151,42 @@ class MeltPoolSimulation:
                 plt.close()
                 plt.clf()
                 font_size = 14
-                plt.plot(np.array(self.times) * 1e3, np.array(self.depths) * 1e6, linewidth=2.0)
-                plt.ylim(-2500, 0)
-                plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
-                plt.ylabel(r'Melt Depth, $d$, [$\mu$m]', fontsize=font_size)
-                plt.plot(np.array(self.indtimes) * 1e3, np.array(self.inddepth) * 1e6, 'k.')
+                plt.plot(np.array(self.times), np.array(self.depths) * 1e3, linewidth=2.0)
+                plt.ylim(-1.3, 0)
+                plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
+                plt.ylabel(r'Melt Depth, $d$, [mm]', fontsize=font_size)
+                plt.plot(np.array(self.indtimes), np.array(self.inddepth) * 1e3)
                 np.max(np.array(self.times))
-                plt.xlim(0, highxlim * 1e3)
-                plt.title(str(round(self.ETenv.time * 1e6)) + r'[$\mu$s] ')
+                plt.xlim(0, highxlim)
+                plt.title(str(round(self.ETenv.time)) + r'[s] ')
 
-                plt.plot(np.arange(0, np.max(np.array(self.times)) * 1e3, 0.01),
-                         -2000 * np.ones(len(np.arange(0, np.max(np.array(self.times)) * 1e3, 0.01))), 'k--')
+                # plt.plot(np.arange(0, np.max(np.array(self.times)), 0.01),
+                #          -2000 * np.ones(len(np.arange(0, np.max(np.array(self.times)) * 1e3, 0.01))), 'k--')
 
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestdepth' + '%04d' % self.current_step + ".png")
                 plt.close()
                 plt.clf()
 
-                plt.plot(np.array(self.times) * 1e3, self.velocity)
-                plt.plot(np.array(self.indtimes) * 1e3, np.array(self.indvel), 'k.', linewidth=2.0)
-                plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
-                plt.ylabel(r'Velocity, $V$, [m/s]', fontsize=font_size)
-                plt.xlim(0, highxlim * 1e3)
-                plt.ylim(0, 0.1)
-                plt.title(str(round(self.ETenv.time * 1e6)) + r'[$\mu$s] ')
+                plt.plot(np.array(self.times), self.velocity)
+                plt.plot(np.array(self.indtimes), np.array(self.indvel) * 1e3, linewidth=2.0)
+                plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
+                plt.ylabel(r'Velocity, $V$, [mm/s]', fontsize=font_size)
+                plt.xlim(0, highxlim)
+                plt.ylim(0, 40)
+                plt.title(str(round(self.ETenv.time)) + r'[s] ')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestvelocity' + '%04d' % self.current_step + ".png")
                 plt.close()
                 plt.clf()
 
-                plt.plot(np.array(self.times) * 1e3, self.power)
-                plt.plot(np.array(self.indtimes) * 1e3, np.array(self.indpower), 'k.', linewidth=2.0)
-                plt.xlabel(r'Time, $t$ [ms]', fontsize=font_size)
+                plt.plot(np.array(self.times), self.power)
+                plt.plot(np.array(self.indtimes), np.array(self.indpower), linewidth=2.0)
+                plt.xlabel(r'Time, $t$ [s]', fontsize=font_size)
                 plt.ylabel(r'Power, $P$, [W]', fontsize=font_size)
-                plt.xlim(0, highxlim * 1e3)
-                plt.ylim(1200, 2500)
-                plt.title(str(round(self.ETenv.time * 1e6)) + r'[$\mu$s] ')
+                plt.xlim(0, highxlim)
+                plt.ylim(2000, 2500)
+                plt.title(str(round(self.ETenv.time)) + r'[s] ')
                 plt.savefig(fig_dir + "/" + str(
                     self.frameskip) + 'powercontrollineartestpower' + '%04d' % self.current_step + ".png")
                 plt.close()
